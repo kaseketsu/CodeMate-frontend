@@ -3,10 +3,11 @@ import "./globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import React, { useCallback, useEffect } from "react";
 import BasicLayout from "@/layouts/basicLayout";
-import {Provider, useDispatch} from "react-redux";
-import store, {AppDispatch} from "@/stores";
-import {getLoginUserUsingGet} from "@/api/userController";
-import {setLoginUser} from "@/stores/loginUser";
+import { Provider, useDispatch } from "react-redux";
+import store, { AppDispatch } from "@/stores";
+import { getLoginUserUsingGet } from "@/api/userController";
+import { setLoginUser } from "@/stores/loginUser";
+import AccessLayout from "@/access/AccessLayout";
 
 /**
  * 初始化
@@ -47,7 +48,9 @@ export default function RootLayout({
         <AntdRegistry>
           <Provider store={store}>
             <InitLayOut>
-              <BasicLayout>{children}</BasicLayout>
+              <BasicLayout>
+                <AccessLayout>{children}</AccessLayout>
+              </BasicLayout>
             </InitLayOut>
           </Provider>
         </AntdRegistry>

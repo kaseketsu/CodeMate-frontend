@@ -16,8 +16,11 @@ import GlobalFooter from "@/components/globalFooter";
 import "./index.css";
 import { menus } from "../../../config/menu";
 import { listQuestionVoByPageUsingPost } from "@/api/questionController";
-import {useSelector} from "react-redux";
-import {RootState} from "@/stores";
+import { useSelector } from "react-redux";
+import { RootState } from "@/stores";
+import getAccessibleMenus from "@/access/menuAccess";
+import MdEditor from "@/components/mdEditor";
+import MdViewer from "@/components/mdViewer";
 
 /**
  * 搜索栏
@@ -63,6 +66,7 @@ interface Props {
 export default function BasicLayout({ children }: Props) {
   const pathname = usePathname();
   const loginUser = useSelector((state: RootState) => state.loginUser);
+
   return (
     <div
       id="basicLayout"
@@ -131,7 +135,7 @@ export default function BasicLayout({ children }: Props) {
         onMenuHeaderClick={(e) => console.log(e)}
         //定义浏览器菜单
         menuDataRender={() => {
-          return menus;
+          return getAccessibleMenus(loginUser);
         }}
         //定义菜单项如何渲染
         menuItemRender={(item, dom) => (
