@@ -8,6 +8,8 @@ import store, { AppDispatch } from "@/stores";
 import { getLoginUserUsingGet } from "@/api/userController";
 import { setLoginUser } from "@/stores/loginUser";
 import AccessLayout from "@/access/AccessLayout";
+import {router} from "next/client";
+import {useRouter} from "next/navigation";
 
 /**
  * 初始化
@@ -18,6 +20,7 @@ const InitLayOut: React.FC<
     children: React.ReactNode;
   }>
 > = ({ children }) => {
+  const router = useRouter();
   //创建触发器
   const dispatch = useDispatch<AppDispatch>();
   //初始化全局用户状态
@@ -25,8 +28,10 @@ const InitLayOut: React.FC<
     const loginUser = await getLoginUserUsingGet();
     if (loginUser.data) {
       //设置全局用户状态
+      dispatch(setLoginUser(loginUser.data))
     } else {
       //跳转到登录页面
+      router.push("/user/login");
     }
   }, []);
 

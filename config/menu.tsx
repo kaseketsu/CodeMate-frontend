@@ -27,6 +27,16 @@ export const menus = [
         name: "用户管理",
         access: AccessEnum.ADMIN,
       },
+      {
+        path: "/admin/bank",
+        name: "题库管理",
+        access: AccessEnum.ADMIN,
+      },
+      {
+        path: "/admin/question",
+        name: "题目管理",
+        access: AccessEnum.ADMIN,
+      },
     ],
   },
 ] as MenuDataItem[];
@@ -34,7 +44,7 @@ export const menus = [
 //根据全部路径查找菜单
 export const findAllMenuByPath = (path: string): MenuDataItem | null => {
   return findMenuByPath(menus, path);
-}
+};
 
 //根据路径查找菜单
 export const findMenuByPath = (

@@ -1,63 +1,21 @@
 "use client";
-import {
-  GithubFilled,
-  LogoutOutlined,
-  PlusCircleFilled,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { GithubFilled, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { ProLayout } from "@ant-design/pro-components";
-import { Dropdown, Input } from "antd";
-import React, { useState } from "react";
+import { Dropdown, message } from "antd";
+import React from "react";
 import { Props } from "next/script";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import GlobalFooter from "@/components/globalFooter";
 import "./index.css";
-import { menus } from "../../../config/menu";
-import { listQuestionVoByPageUsingPost } from "@/api/questionController";
-import { useSelector } from "react-redux";
-import { RootState } from "@/stores";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/stores";
 import getAccessibleMenus from "@/access/menuAccess";
-import MdEditor from "@/components/mdEditor";
-import MdViewer from "@/components/mdViewer";
-
-/**
- * 搜索栏
- * @constructor
- */
-const SearchInput = () => {
-  return (
-    <div
-      key="SearchOutlined"
-      aria-hidden
-      style={{
-        display: "flex",
-        alignItems: "center",
-        marginInlineEnd: 24,
-      }}
-      onMouseDown={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
-      }}
-    >
-      <Input
-        style={{
-          borderRadius: 4,
-          marginInlineEnd: 12,
-        }}
-        prefix={<SearchOutlined />}
-        placeholder="搜索方案"
-        variant="borderless"
-      />
-      <PlusCircleFilled
-        style={{
-          fontSize: 24,
-        }}
-      />
-    </div>
-  );
-};
+import { userLogoutUsingPost } from "@/api/userController";
+import { setLoginUser } from "@/stores/loginUser";
+import { DEFAULT_USER } from "@/constants/userConstant";
+import SearchInput from "@/layouts/basicLayout/components/searchInput";
 
 interface Props {
   children: React.ReactNode;
@@ -66,6 +24,18 @@ interface Props {
 export default function BasicLayout({ children }: Props) {
   const pathname = usePathname();
   const loginUser = useSelector((state: RootState) => state.loginUser);
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
+  const doLogOut = async () => {
+    try {
+      await userLogoutUsingPost();
+      message.success("退出登录成功");
+      dispatch(setLoginUser(DEFAULT_USER));
+      router.push("/user/login");
+    } catch (e) {
+      message.error("退出登录失败, " + e.message);
+    }
+  };
 
   return (
     <div
@@ -80,7 +50,7 @@ export default function BasicLayout({ children }: Props) {
         layout="top"
         logo={
           <Image
-            src="/assets/logo.png"
+            src="/assets/logo5.png"
             width={32}
             height={32}
             alt="小花刷题平台"
@@ -90,10 +60,21 @@ export default function BasicLayout({ children }: Props) {
           pathname,
         }}
         avatarProps={{
-          src: loginUser.userAvatar || "/assets/logo.png",
+          src: loginUser.userAvatar || "/assets/logo5.png",
           size: "small",
           title: loginUser.userName || "程序员小花",
           render: (props, dom) => {
+            if (!loginUser.id) {
+              return (
+                <div
+                  onClick={() => {
+                    router.push("/user/login");
+                  }}
+                >
+                  {dom}
+                </div>
+              );
+            }
             return (
               <Dropdown
                 menu={{
@@ -103,7 +84,20 @@ export default function BasicLayout({ children }: Props) {
                       icon: <LogoutOutlined />,
                       label: "退出登录",
                     },
+                    {
+                      key: "userCenter",
+                      icon: <UserOutlined />,
+                      label: "个人中心",
+                    }
                   ],
+                  onClick: (event: { key: React.Key }) => {
+                    if (event.key === "logout") {
+                      doLogOut();
+                    }
+                    else if (event.key === "userCenter") {
+                      router.push("/user/center");
+                    }
+                  },
                 }}
               >
                 {dom}
