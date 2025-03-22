@@ -538,6 +538,10 @@ declare namespace API {
     userId?: number;
   };
 
+  type QuestionBatchRemoveRequest = {
+    questionIdList?: number[];
+  };
+
   type QuestionEditRequest = {
     answer?: string;
     content?: string;

@@ -2,6 +2,7 @@ import { updateQuestionUsingPost } from "@/api/questionController";
 import { Button, Form, message, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import {
+  addQuestionBankQuestionByBatchUsingPost,
   addQuestionBankQuestionUsingPost,
   deleteQuestionBankQuestionUsingPost,
   listQuestionBankQuestionVoByPageUsingPost,
@@ -21,7 +22,7 @@ interface Props {
  * @param props
  * @constructor
  */
-const UpdateBankModal: React.FC<Props> = (props) => {
+const BatchAddQuestionToBankModal: React.FC<Props> = (props) => {
   const { questionIdList = [], visible, onCancel, onSubmit } = props;
   const [form] = Form.useForm();
   const [questionBankList, setQuestionBankList] = useState<
@@ -42,11 +43,29 @@ const UpdateBankModal: React.FC<Props> = (props) => {
     }
   };
 
+  const doSubmit = async (values: API.QuestionBankQuestionBatchAddRequest) => {
+    const hide = message.loading("正在添加题目到题库中...");
+    const questionBankId = values.questionBankId;
+    if (!questionBankId) {
+      return;
+    }
+    try {
+      await addQuestionBankQuestionByBatchUsingPost({
+        questionBankId,
+        questionIdList,
+      });
+      hide();
+      message.success("添加成功");
+      onSubmit?.();
+    } catch (e) {
+      hide();
+      message.error("添加失败, " + e.message);
+    }
+  };
+
   useEffect(() => {
     getBankList();
   }, []);
-
-
 
   return (
     <Modal
@@ -58,7 +77,7 @@ const UpdateBankModal: React.FC<Props> = (props) => {
         onCancel?.();
       }}
     >
-      <Form form={form} style={{ marginTop: 24 }} onFinish={() => {}}>
+      <Form form={form} style={{ marginTop: 24 }} onFinish={doSubmit}>
         <Form.Item label={"选择题库"} name="questionBankId">
           <Select
             style={{ width: "100%" }}
@@ -79,4 +98,4 @@ const UpdateBankModal: React.FC<Props> = (props) => {
     </Modal>
   );
 };
-export default UpdateBankModal;
+export default BatchAddQuestionToBankModal;
