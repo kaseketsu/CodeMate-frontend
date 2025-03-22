@@ -1,6 +1,6 @@
 # Interview QA Platform 👨💻👩💻
 
-[后端]((https://github.com/kaseketsu/CodeMate-backend)) | [backend](https://github.com/kaseketsu/CodeMate-backend)
+[后端](https://github.com/kaseketsu/CodeMate-backend) | [backend](https://github.com/kaseketsu/CodeMate-backend)
 
 ---
 
